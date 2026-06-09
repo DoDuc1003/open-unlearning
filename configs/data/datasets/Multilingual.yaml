@@ -1,0 +1,9 @@
+Multilingual:
+  handler: PretrainingForMultilingualDataset
+  args:
+    data_path: data/multilingual
+    language: ${language}
+    books: ${books}
+    chapters: ${chapters}
+    text_key: text
+    max_length: 512

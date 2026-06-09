@@ -1,0 +1,10 @@
+Wikitext:
+  handler: PretrainingDataset
+  args:
+    hf_args:
+      path: json
+      data_dir: data/multilingual_wikitext
+      data_files: ${language}.jsonl
+      split: train
+    text_key: text
+    max_length: 512
