@@ -1,0 +1,45 @@
+# @package _global_
+
+defaults:
+  - override /model: Qwen2.5-7B
+  - override /trainer: RMU
+  - override /data: unlearn
+  - override /data/datasets@data.forget: Multilingual
+  - override /data/datasets@data.retain: Multilingual_Wikitext
+  - override /eval: lm_eval
+
+task_name: ???
+unlearn_layer: null  # used for RMU only
+language: ???
+books: ???
+chapters: ???
+
+model:
+  peft_config:
+    r: null  # 128
+    target_modules: null  # "[gate_proj,up_proj,down_proj]"
+    layers_to_transform: null  # "[$((unlearn_layer-2)),$((unlearn_layer-1)),$((unlearn_layer))]"
+
+collator:
+  DataCollatorForSupervisedDataset:
+    args:
+      padding_side: left
+
+trainer:
+  args:
+    per_device_train_batch_size: 1
+    gradient_accumulation_steps: 4
+    num_train_epochs: 1
+    learning_rate: 5.0e-5
+    lr_scheduler_type: constant
+    run_name: ${task_name}
+  method_args:
+    trainable_params_regex: null
+      # - 'model\.layers\.(${sub:${unlearn_layer},2}|${sub:${unlearn_layer},1}|${unlearn_layer})\.mlp.*\.down_proj\.weight'
+
+eval:
+  lm_eval:
+    batch_size: 32
+    tasks:
+      - multilingual_unlearning
+      - mmlu
